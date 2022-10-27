@@ -10,12 +10,14 @@ export async function getOptions() {
       }
       const data = await response.json();
       let processedData = [];
-      processedData = data.filter(d => {
-      if(d && d.DesignatedConcrete) {
-          return true;
-        }
-        return false;
-      });
+      if(data) {
+        processedData = data.filter(d => {
+          if(d && d.DesignatedConcrete) {
+              return true;
+            }
+            return false;
+          });
+      }
       if(!processedData.length) {
         throw new Error("The data received was invalid for the dropdown");
       }

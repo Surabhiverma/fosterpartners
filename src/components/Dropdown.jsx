@@ -16,12 +16,14 @@ const Dropdown = () => {
     if(response && response.ok) {
       const data = await response.json();
       let validData = [];
-      validData = data.cementContents.filter((c) => {
-        if(c && c.label && c.value) {
-          return true;
-        }
-        return false;
-      });
+      if(data && data.cementContents) {
+        validData = data.cementContents.filter((c) => {
+          if(c && c.label && c.value) {
+            return true;
+          }
+          return false;
+        });
+      }
       if(!validData.length) {
         throw new Error("The data received was invalid for the chart");
       }
