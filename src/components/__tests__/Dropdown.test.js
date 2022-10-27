@@ -1,14 +1,17 @@
-import React from 'react';
-import {render, screen, cleanup, waitFor, fireEvent} from '@testing-library/react';
+import React, { useState } from 'react';
+import {render, waitFor, cleanup} from '@testing-library/react';
 import Dropdown from '../Dropdown';
+import '@testing-library/jest-dom';
 import * as APIService from '../../api/api';
 import selectEvent from 'react-select-event';
+import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('../../api/api');
 
 describe("Dropdown component", () => {
     beforeEach(()=> {
         jest.clearAllMocks();
+        cleanup();
     });
     it('should have the placeholder in dropdown component', ()=>{
         const { getByText } = render(<Dropdown/>);
@@ -19,13 +22,12 @@ describe("Dropdown component", () => {
 
     it('should have the component rendered', ()=>{
         const { queryByTestId } = render(<Dropdown/>);
-        const selectConcrete = queryByTestId('concrete-select');
+        const selectConcrete = queryByTestId('concrete-select-form');
         expect(selectConcrete).toBeDefined();
         expect(selectConcrete).not.toBeNull();
     });
-    
-    it('should call onChange when the first option is selected', async ()=> {
-        const { getAllByText, getByTestId } = render(<Dropdown/>);
+
+    it('should select option', async  () => {
         APIService.getOptions.mockResolvedValueOnce([
             {
                 "GeneralPurpose": "Building structures",
@@ -39,12 +41,31 @@ describe("Dropdown component", () => {
                 "NominalCover": 20,
                 "DesignatedConcrete": "RC40/50"
             }]);
+        const { getByLabelText, getByTestId} = render(<Dropdown/>);
         await waitFor(()=>{
-            selectEvent.select(getAllByText('Select...')[0], ["Mock"]);
+            selectEvent.select(getByLabelText('Designated Concrete Type'), ["Mock"]);
+            const form = getByTestId('concrete-select-form');
+            expect(form).toHaveFormValues({designatedConcrete: "Mock" });
         });
-        //expect(handleChange).toHaveBeenCalled();
-        //expect(getByTestId("concrete-select-form")).toHaveFormValues({ value: "Mock" });
-        //await waitFor(() => getByText('Mock'));
+    });
+
+    it('should render select when the response is empty', async  () => {
+        APIService.getOptions.mockResolvedValueOnce([]);
+        const { getByLabelText, getByTestId} = render(<Dropdown/>);
+        await waitFor(()=>{
+            selectEvent.select(getByLabelText('Designated Concrete Type'), ["mock"]);
+            const form = getByTestId('concrete-select-form');
+            expect(form).toHaveFormValues({designatedConcrete: "" });
+        });
+    });
+    
+    it('should update the setSelectedInputValue be invoked on component render', ()=> {
+
+        const setMockSelectedInputValue = jest.fn(() => ({"DesignatedConcrete":"Mock"}));
+        const useStateMock = () => [useState, setMockSelectedInputValue];
+        jest.spyOn(React, 'useState').mockImplementation(useStateMock);
+        render(<Dropdown/>);
+        expect(setMockSelectedInputValue).toHaveBeenCalled();
     });
 
 });

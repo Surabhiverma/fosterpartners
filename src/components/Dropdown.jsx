@@ -13,7 +13,7 @@ const Dropdown = () => {
     const handleChange = async value => {
         setSelectedInputValue(value);
         const response = await APIService.getChartData(value);
-        if(response.ok) {
+        if(response && response.ok) {
           const data = await response.json();
           setSelectedConcrete({
             labels: data.cementContents.map((c) => c.label),
@@ -36,20 +36,18 @@ const Dropdown = () => {
         <Grid container className={classes.grid} justifyContent='space-around'  >
             <Grid item >
                 <Paper variant="outlined" className={classes.paper} data-testid="concrete-select">
-                    <Typography color="textSecondary" gutterBottom>
+                <form data-testid="concrete-select-form">
+                  <label htmlFor="selected-concrete"><Typography color="textSecondary" gutterBottom>
                         Designated Concrete Type
-                    </Typography>
-                    <form data-testid="concrete-select-form">
+                    </Typography></label>
                       <AsyncSelect
                         name= "designatedConcrete"
-                        labelId="selected-concrete"
-                        id="select-concrete"
+                        inputId = 'selected-concrete'
                         defaultOptions
                         value={selectedInputValue}
                         getOptionLabel = {e => e.DesignatedConcrete}
                         getOptionValue = {e => e.DesignatedConcrete}
                         loadOptions = {APIService.getOptions}
-                        label="designatedConcrete"
                         onChange={handleChange}
                         isSearchable={false}
                       /> 
