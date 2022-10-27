@@ -8,10 +8,13 @@ This is a small web application developed using React JS to render a component f
 3. Jest
 4. AsyncSelect/Chart.js 
 
+# Prerequisites
+The system should be installed with NodeJS for npm runs. 
+
 # Install and Run
-1. run npm install – from inside your app directory 
-2. npm start – to run the app, hosted on localhost:3000 by default
-3. npm run test – to run the test cases
+1. run 'npm install --force' – from inside your app directory 
+2. run 'npm start' – to run the app, hosted on localhost:3000 by default
+3. run 'npm run test' – to run the test cases
 
 
 
